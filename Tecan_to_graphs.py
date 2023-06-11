@@ -401,7 +401,8 @@ plt.show()
 '''Here there will be a function that will iterate through the growth means and 
 luminescence means, growth std. devs and luminescence st. devs. and plot them in pairs
 on the separate subplots'''
-def paired_plots(replicates, df1, df2, xlabel = 'Time [h]', ylabel1 = None, ylabel2 = None, same_yscales = True, color1 = 'blue', color2 = 'orange'):
+def paired_plots(replicates, df1, df2, xlabel = 'Time [h]', ylabel1 = None, ylabel2 = None, same_yscales = True, keyword1 = "growth", keyword2 = "luminescence",  color1 = 'blue', color2 = 'orange'):
+    
     x = df1['Time [h]'].astype(float) #x axis is the same for all plots
     
     plotted_means1 = []
@@ -452,6 +453,7 @@ def paired_plots(replicates, df1, df2, xlabel = 'Time [h]', ylabel1 = None, ylab
     else: 
         pass    
     # Plotting data on the first y axis
+
     for i, (mean, std) in enumerate(zip(plotted_means1, plotted_stds1)):
         c = i % ncols
         r = i // ncols
@@ -459,7 +461,9 @@ def paired_plots(replicates, df1, df2, xlabel = 'Time [h]', ylabel1 = None, ylab
         lower = mean - error
         upper = mean + error
         ax1 = axes[r, c]
-        sns.lineplot(x=x, y=mean, ax=ax1, label=mean.name.split(":")[0]+" growth", color = color1)
+        sns.lineplot(x=x, y=mean, ax=ax1, color = color1, label = keyword1)
+        ax1.legend(loc = "upper right")
+        ax1.set_title(mean.name.split(":")[0])
         ax1.fill_between(x, lower, upper, color = color1, alpha=0.2)
         if same_yscales is True:
             ax1.set_ylim(y_min1, y_max1)
@@ -469,7 +473,7 @@ def paired_plots(replicates, df1, df2, xlabel = 'Time [h]', ylabel1 = None, ylab
     plotted_stds1.clear()
     
     # Plotting data on the second y axis
-    
+
     for j, (mean2, std2) in enumerate(zip(plotted_means2, plotted_stds2)):
         c = j % ncols
         r = j // ncols
@@ -478,20 +482,20 @@ def paired_plots(replicates, df1, df2, xlabel = 'Time [h]', ylabel1 = None, ylab
         upper2 = mean2 + error
         ax2 = axes[r, c]
         ax2 = ax2.twinx()
-        sns.lineplot(x=x, y=mean2, ax=ax2, color = color2
-                     ,label=mean2.name.split(":")[0] + " luminescence"
-                     )
+        sns.lineplot(x=x, y=mean2, ax=ax2, color = color2, label = keyword2)
+        ax2.legend(loc = "lower right")
         ax2.fill_between(x, lower2, upper2, color = color2, alpha=0.2)
         if same_yscales is True:
             ax2.set_ylim(y_min2, y_max2)
         ax2.set_xlabel(xlabel)
         ax2.set_ylabel(ylabel2)
-
-    if ncols * nrows > len(rep.items()):
+    
+    if ncols * nrows > len(replicates.items()):
         n_to_hide = ncols * nrows - len(rep.items())
         while n_to_hide > 0:    
             axes[nrows - 1, n_to_hide].set_visible(False)
             n_to_hide = n_to_hide - 1
+            
     
 sns.set_style("white")
 ncols, nrows, fig_size = optimum_grid(rep, plot_width, plot_height, space, left, right, bottom, top)
@@ -502,7 +506,8 @@ color2 = 'orange'
 
 paired_plots(rep, growth_df, rlu_df, xlabel = 'Time [h]', ylabel1 = 'OD [AU]', ylabel2 = 'Luminescence [RLU]', same_yscales = False)    
 fig.tight_layout()   
-plt.show()    
+plt.savefig(o + "_paired_plots" + "_RLU" + ".png", format = "png", dpi = 300)
+plt.show()
     
     
     
