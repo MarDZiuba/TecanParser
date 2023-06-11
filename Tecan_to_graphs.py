@@ -401,7 +401,7 @@ plt.show()
 '''Here there will be a function that will iterate through the growth means and 
 luminescence means, growth std. devs and luminescence st. devs. and plot them in pairs
 on the separate subplots'''
-def paired_plots(replicates, df1, df2, xlabel = 'Time [h]', ylabel1 = None, ylabel2 = None, same_yscales = True, keyword1 = "growth", keyword2 = "luminescence",  color1 = 'blue', color2 = 'orange'):
+def paired_plots(replicates, df1, df2, xlabel = 'Time [h]', ylabel1 = None, ylabel2 = None, same_yscales = True, keyword1 = None, keyword2 = None,  color1 = 'blue', color2 = 'orange'):
     
     x = df1['Time [h]'].astype(float) #x axis is the same for all plots
     
@@ -504,7 +504,7 @@ fig.subplots_adjust(hspace=0.5, wspace=0.5) # adjust the spacing between the sub
 color1 = 'blue'
 color2 = 'orange'
 
-paired_plots(rep, growth_df, rlu_df, xlabel = 'Time [h]', ylabel1 = 'OD [AU]', ylabel2 = 'Luminescence [RLU]', same_yscales = False)    
+paired_plots(rep, growth_df, rlu_df, xlabel = 'Time [h]', ylabel1 = 'OD [AU]', ylabel2 = 'Luminescence [RLU]', keyword1="growth", keyword2="luminescence", same_yscales = False)    
 fig.tight_layout()   
 plt.savefig(o + "_paired_plots" + "_RLU" + ".png", format = "png", dpi = 300)
 plt.show()
