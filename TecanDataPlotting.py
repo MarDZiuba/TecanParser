@@ -118,6 +118,7 @@ def separate_lineplots_w_stdev_as_shadows(replicates, ncols, nrows, fig_size, df
         while n_to_hide > 0:    
             axes[nrows - 1, n_to_hide].set_visible(False)
             n_to_hide = n_to_hide - 1
+    fig.tight_layout()
 
 def paired_plots(replicates, ncols, nrows, fig_size, df1, df2, xlabel = 'Time [h]', ylabel1 = None, 
                  ylabel2 = None, same_yscales = True, 

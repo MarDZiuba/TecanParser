@@ -173,8 +173,17 @@ def process_extracted_monomeasurements(data, time_df, replicates):
     
     return tidy_df
 
-def normalize_measurements():
-    pass
+def normalize_measurements(tidy_df1, tidy_df2):
+    norm_df = tidy_df2.copy()
+    for column in norm_df.columns:
+        if "Mean value" not in column and "St. dev" not in column and "Time" not in column and "Zeit" not in column:
+            norm_df[column] = tidy_df2[column].div(tidy_df1[column])
+        if "Mean value" in column:
+            col_idx = norm_df.columns.get_loc(column)
+            norm_df[column] = norm_df.iloc[:, col_idx-3:col_idx-1].mean(axis = 1)
+        if "St. dev"  in column:
+            norm_df[column] = norm_df.iloc[:, col_idx-3:col_idx-1].std(axis = 1)
+    return norm_df
 
 def write_to_excel(outputname):
     '''Initiate an excel file for writing processed data'''
