@@ -122,8 +122,6 @@ def separate_lineplots_w_stdev_as_shadows(replicates, ncols, nrows, fig_size, df
 
 def paired_plots(replicates, ncols, nrows, fig_size, df1, df2, xlabel = 'Time [h]', ylabel1 = None, 
                  ylabel2 = None, same_yscales = True, 
-                 keyword1 = None, 
-                 keyword2 = None,  
                  color1 = 'blue', color2 = 'orange'):
     
     fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=fig_size, sharey = False)
@@ -187,7 +185,7 @@ def paired_plots(replicates, ncols, nrows, fig_size, df1, df2, xlabel = 'Time [h
         lower = mean - error
         upper = mean + error
         ax1 = axes[r, c]
-        sns.lineplot(x=x, y=mean, ax=ax1, color = color1, label = keyword1)
+        sns.lineplot(x=x, y=mean, ax=ax1, color = color1, label = ylabel1)
         ax1.legend(loc = "upper right")
         ax1.set_title(mean.name.split(":")[0])
         ax1.fill_between(x, lower, upper, color = color1, alpha=0.2)
@@ -199,7 +197,7 @@ def paired_plots(replicates, ncols, nrows, fig_size, df1, df2, xlabel = 'Time [h
     plotted_stds1.clear()
     
     # Plotting data on the second y axis
-
+    sns.set_style("white")
     for j, (mean2, std2) in enumerate(zip(plotted_means2, plotted_stds2)):
         c = j % ncols
         r = j // ncols
@@ -208,7 +206,7 @@ def paired_plots(replicates, ncols, nrows, fig_size, df1, df2, xlabel = 'Time [h
         upper2 = mean2 + error
         ax2 = axes[r, c]
         ax2 = ax2.twinx()
-        sns.lineplot(x=x, y=mean2, ax=ax2, color = color2, label = keyword2)
+        sns.lineplot(x=x, y=mean2, ax=ax2, color = color2, label = ylabel2)
         ax2.legend(loc = "lower right")
         ax2.fill_between(x, lower2, upper2, color = color2, alpha=0.2)
         if same_yscales is True:
