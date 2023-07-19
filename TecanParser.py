@@ -10,7 +10,6 @@ v. 0.1
 import argparse
 import pandas as pd
 import sys
-
 import TecanDataProcessing as tdprocess
 
 
@@ -29,6 +28,7 @@ parser.add_argument('-db1', '--data_boundaries1', help = 'Indicate the starting 
 parser.add_argument('-db2', '--data_boundaries2', help = 'Indicate the starting and the ending row number from the input excel file for the second type of measurements. Type numbers separated by space (e.g. 69 1219)', nargs = 2, type = int, required = False)
 parser.add_argument('-b', '--blank', help = 'Indicate a well with blank measurements (e.g., A1)', required = True)
 parser.add_argument('-r', '--replicates', help = 'Text file containing information on sample names and the corresponding wells with replicate measurements. See README.md for details on how to create such text files')
+parser.add_argument('-f', '--format',help = 'Saving format for the plots. Available options: pdf, eps, svg, png, jpeg, tiff', default = 'pdf', type = str, required = False)
 
 args = parser.parse_args()
 
@@ -126,15 +126,25 @@ check_if_plot = input('\n Do you wish to plot the data? [yes/no] ')
 check_if_plot = check_if_plot.rstrip()
 
 if check_if_plot.lower() != 'yes':
-    sys.exit('\n No plots to draw. Exiting the application.')
+    sys.exit('\n No plots to create. Exiting the application.')
 else: 
-    print('\n Warning: Data for each sample will be drawn on separate subplots and saved in .pdf format. \n For more plot drawing options use TecanPlotter tool (coming soon).')
-
+    format = args.format
+    print('\n Creating plots...')
+    
 import seaborn as sns
 import TecanDataPlotting as tdplot
 import matplotlib.pyplot as plt
 
-sns.set_theme(palette = "bright", font_scale = 1, style = "whitegrid", font = "Verdana")
+sns.set_theme(palette = "colorblind", font_scale = 1, style = "whitegrid", font = "Verdana")
+
+#Plot measurement_1 all curves on one plot
+
+tdplot.combined_lineplot_w_stdev_as_shadows(replicates, m1_tidy_df, xlabel = 'Time [h]'
+                                     , ylabel = keyword1)
+plt.savefig(outputname + '_' + keyword1 + "_combined." + format, 
+            format = format, dpi = 300)
+plt.show()
+
 
 #Set the size of the plots and margin sizes
 plot_width = 6  # width of each subplot in inches
@@ -154,32 +164,46 @@ tdplot.separate_lineplots_w_stdev_as_shadows(replicates, ncols, nrows, fig_size,
                                       m1_tidy_df, xlabel = 'Time [h]', 
                                       ylabel = keyword1, same_yscale=True)
 
-plt.savefig(outputname + '_' + keyword1 + "_separate" + ".pdf", format = "pdf")
+plt.savefig(outputname + '_' + keyword1 + "_separate." + format, format = format, dpi = 300)
 plt.show()
 
 #Plot measurement_2 as separate subplot for each sample
 
 if args.measurement2:
+    
+    tdplot.combined_lineplot_w_stdev_as_shadows(replicates, m2_tidy_df, xlabel = 'Time [h]',
+                                                ylabel = keyword2)
+    plt.savefig(outputname + '_' + keyword2 + "_combined." + format, format = format, dpi = 300)
+    plt.show()
+    
+    tdplot.combined_lineplot_w_stdev_as_shadows(replicates, norm_df, xlabel = 'Time [h]',
+                                                ylabel = 'relative_' + keyword2)
+    plt.savefig(outputname + '_' + 'relative_' + keyword2 + "_combined." + format, 
+                format = format, dpi = 300)
+    plt.show()
+    
     tdplot.separate_lineplots_w_stdev_as_shadows(replicates, ncols, nrows, fig_size, 
                                           m2_tidy_df, xlabel = 'Time [h]', 
                                           ylabel = keyword2, same_yscale=True)
     
-    plt.savefig(outputname + '_' + keyword2 + "_separate" + ".pdf", format = "pdf")
+    plt.savefig(outputname + '_' + keyword2 + "_separate." + format, 
+                format = format, dpi = 300)
     plt.show()
 
     #Plot normalized measurements 
 
     tdplot.separate_lineplots_w_stdev_as_shadows(replicates, ncols, nrows, fig_size, 
                                           norm_df, xlabel = 'Time [h]', 
-                                          ylabel = 'norm_' + keyword2, same_yscale=True)
+                                          ylabel = 'relative_' + keyword2, same_yscale=True)
     
-    plt.savefig(outputname + '_' + 'norm_' + keyword2 + "_separate" + ".pdf", format = "pdf")
+    plt.savefig(outputname + '_' + 'relative_' + keyword2 + "_separate." + format, 
+                format = format, dpi = 300)
     plt.show()
     
     # Plot paired measurements (with normalized measurements)
     tdplot.paired_plots(replicates, ncols, nrows, fig_size, m1_tidy_df, norm_df, xlabel = 'Time [h]', ylabel1 = keyword1, 
-                     ylabel2 = 'norm_' + keyword2, same_yscales = True, 
+                     ylabel2 = 'relative_' + keyword2, same_yscales = True, 
                      color1 = 'blue', color2 = 'orange')    
-    plt.savefig(outputname + "_paired" + ".pdf", format = "pdf")
+    plt.savefig(outputname + "_paired." + format, format = format, dpi = 300)
     plt.show()
-    
+print('\n Plots complete.')

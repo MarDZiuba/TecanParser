@@ -197,15 +197,15 @@ def paired_plots(replicates, ncols, nrows, fig_size, df1, df2, xlabel = 'Time [h
     plotted_stds1.clear()
     
     # Plotting data on the second y axis
-    sns.set_style("white")
+    sns.set_style("whitegrid", {'axes.edgecolor': '.05'})
+    sns.despine()
     for j, (mean2, std2) in enumerate(zip(plotted_means2, plotted_stds2)):
         c = j % ncols
         r = j // ncols
         error = 0.5 * std2
         lower2 = mean2 - error
         upper2 = mean2 + error
-        ax2 = axes[r, c]
-        ax2 = ax2.twinx()
+        ax2 = axes[r, c].twinx()
         sns.lineplot(x=x, y=mean2, ax=ax2, color = color2, label = ylabel2)
         ax2.legend(loc = "lower right")
         ax2.fill_between(x, lower2, upper2, color = color2, alpha=0.2)
@@ -213,6 +213,10 @@ def paired_plots(replicates, ncols, nrows, fig_size, df1, df2, xlabel = 'Time [h
             ax2.set_ylim(y_min2, y_max2)
         ax2.set_xlabel(xlabel)
         ax2.set_ylabel(ylabel2)
+        # ax2.spines['bottom'].set_visible(False)
+        # ax2.spines['top'].set_visible(False)
+        # ax2.spines['left'].set_visible(False)
+        # ax2.spines['right'].set_visible(True)
     
     if ncols * nrows > len(replicates.items()):
         n_to_hide = ncols * nrows - len(replicates.items())
