@@ -123,7 +123,7 @@ def separate_lineplots_w_stdev_as_shadows(replicates, ncols, nrows, fig_size, df
 def paired_plots(replicates, ncols, nrows, fig_size, df1, df2, xlabel = 'Time [h]', ylabel1 = None, 
                  ylabel2 = None, same_yscales = True, 
                  color1 = 'blue', color2 = 'orange'):
-    
+    sns.set_style("white")
     fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=fig_size, sharey = False)
     fig.subplots_adjust(hspace=0.5, wspace=0.5) # adjust the spacing between the subplots
     
@@ -197,8 +197,11 @@ def paired_plots(replicates, ncols, nrows, fig_size, df1, df2, xlabel = 'Time [h
     plotted_stds1.clear()
     
     # Plotting data on the second y axis
-    sns.set_style("whitegrid", {'axes.edgecolor': '.05'})
-    sns.despine()
+    sns.set_style("white", { 
+                            'axes.spines.left': False,
+                            'axes.spines.bottom': False,
+                            'axes.spines.right': True,
+                            'axes.spines.top': False})
     for j, (mean2, std2) in enumerate(zip(plotted_means2, plotted_stds2)):
         c = j % ncols
         r = j // ncols
